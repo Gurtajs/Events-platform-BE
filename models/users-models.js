@@ -33,9 +33,37 @@ function postUserData(user) {
   })
 }
 
+function getAllEventsByUserData(user_id) {
+  return db.query(`SELECT * FROM events WHERE user_id = $1`, [user_id]).then((events) => {
+    console.log(events.rows)
+    const eventRows = events.rows
+    if (eventRows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        message: "Not found"
+      })
+    }
+    return eventRows
+  })
+}
+
+function getEventByUserData(user_id, event_id) {
+  return db.query(`SELECT * FROM events WHERE user_id=$1 AND event_id=$2`, [user_id, event_id]).then((event) => {
+    const eventRows = event.rows[0]
+    if (eventRows.length===0) {
+      return Promise.reject({
+        status: 404,
+        message: "Not found"
+      })
+    }
+    return eventRows
+  })
+}
+
 module.exports = {
   getAllUsersData,
   getUserData,
   postUserData,
-
+  getAllEventsByUserData,
+  getEventByUserData
 };
