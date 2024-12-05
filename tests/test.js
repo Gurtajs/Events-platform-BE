@@ -78,7 +78,7 @@ describe("/api/users", () => {
   });
 });
 
-describe('"/api/events', () => {
+describe("/api/events", () => {
   test("GET: 200 - should return all events", () => {
     return request(app)
       .get("/api/events")
@@ -99,4 +99,47 @@ describe('"/api/events', () => {
         });
       });
   });
+  test("GET: 404 - responds with an error message when given an non-existent endpoint", () => {
+    return request(app)
+      .get("/api/eventss")
+      .expect(404)
+      .then((body) => {
+        expect(body.res.statusMessage).toBe("Not Found");
+      });
+  });
 });
+
+describe("/api/events/:event_id", () => {
+  test('should return an event by event id', () => {
+    return request(app)
+      .get("/api/events/1")
+      .expect(200)
+      .then(({ body }) => {
+        const event = body.event;
+        expect(event.event_id).toBe(1);
+          expect(event.user_id).toBe(1);
+          expect(event.title).toBe("Football match");
+          expect(event.description).toBe("Looking for 5 players for a football match");
+          expect(event.location).toBe("Birmingham");
+          expect(event.capacity).toBe(5);
+          expect(event.date).toBe("2024-04-11T23:00:00.000Z");
+          expect(event.organiser).toBe("football_master");
+      });
+  });
+  test("GET: 404 - sends an appropriate status and error mesage when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/events/99999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Not found");
+      });
+  });
+  test("GET: 400 - sends an appropriate status and error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/events/invalidevent")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+})

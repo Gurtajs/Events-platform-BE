@@ -6,4 +6,18 @@ function getAllEventsData() {
   })
 }
 
-module.exports = {getAllEventsData}
+function getEventByIdData(event_id) {
+  return db.query(`SELECT * FROM events WHERE event_id = $1`, [event_id]).then((event) => {
+    const eventRow = event.rows[0]
+    if (!eventRow) {
+      return Promise.reject({
+        status: 404,
+        message: "Not found"
+      })
+    }
+    return eventRow
+  })
+}
+
+
+module.exports = {getAllEventsData, getEventByIdData}
