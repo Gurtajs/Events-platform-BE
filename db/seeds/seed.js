@@ -43,9 +43,10 @@ const seed = ({ userData, eventsData }) => {
     })
     .then(() => {
       const insertEventsQueryStr = format(
-        "INSERT INTO events (title, description, location, capacity, date, organiser) VALUES %L RETURNING *;",
+        "INSERT INTO events (user_id, title, description, location, capacity, date, organiser) VALUES %L RETURNING *;",
         eventsData.map(
-          ({ title, description, location, capacity, date, organiser }) => [
+          ({ user_id, title, description, location, capacity, date, organiser }) => [
+            user_id,
             title,
             description,
             location,

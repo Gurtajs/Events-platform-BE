@@ -1,5 +1,6 @@
 module.exports = [
   {
+    user_id: 1,
     title: "Football match",
     description: "Looking for 5 players for a football match",
     location: "Birmingham",
@@ -8,6 +9,7 @@ module.exports = [
     organiser: "football_master",
   },
   {
+    user_id: 3,
     title: "Running event",
     description: "Looking for runners for a charity run",
     location: "Birmingham",
@@ -16,6 +18,7 @@ module.exports = [
     organiser: "charity_runner",
   },
   {
+    user_id: 2,
     title: "Football match",
     description: "Looking for 5 players for a football match",
     location: "Birmingham",

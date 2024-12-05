@@ -1,4 +1,11 @@
-const {getUserData} = require("../models/user-models")
+const {getAllUsersData, getUserData, postUserData} = require("../models/users-models")
+
+function getAllUsers(req, res, next) {
+  getAllUsersData().then((users) => {
+    res.status(200).send({users})
+  }).catch(next)
+}
+
 
 function getUser(req, res, next) {
   const {user_id} = req.params
@@ -7,4 +14,11 @@ function getUser(req, res, next) {
   }).catch(next)
 }
 
-module.exports = {getUser}
+function postUser(req, res, next) {
+  const user = req.body
+  postUserData(user).then((user) => {
+    res.status(201).send({user})
+  }).catch(next)
+}
+
+module.exports = {getAllUsers, getUser, postUser}
