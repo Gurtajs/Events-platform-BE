@@ -196,9 +196,7 @@ describe("/api/users/:user_id/events/:event_id", () => {
         expect(event.event_id).toBe(2);
         expect(event.user_id).toBe(3);
         expect(event.title).toBe("Running event");
-        expect(event.description).toBe(
-          "Looking for runners for a charity run"
-        );
+        expect(event.description).toBe("Looking for runners for a charity run");
         expect(event.location).toBe("Birmingham");
         expect(event.capacity).toBe(3);
         expect(event.date).toBe("2024-08-11T23:00:00.000Z");
@@ -206,3 +204,71 @@ describe("/api/users/:user_id/events/:event_id", () => {
       });
   });
 });
+
+describe("/api/users/:user_id/events", () => {
+  test("POST: 201 - should post an event for a user", () => {
+    const event = {
+      user_id: 2,
+      title: "Hiking Trip",
+      description:
+        "A group hike through the mountains, bring water and snacks.",
+      location: "Swiss Alps",
+      date: "01/12/2024",
+      capacity: 10,
+      organiser: "outdoor_enthusiast",
+    };
+    return request(app)
+      .post("/api/users/2/events")
+      .send(event)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.event).toMatchObject({
+          user_id: 2,
+          title: "Hiking Trip",
+          description:
+            "A group hike through the mountains, bring water and snacks.",
+          location: "Swiss Alps",
+          date: "2024-01-12T00:00:00.000Z",
+          capacity: 10,
+          organiser: "outdoor_enthusiast",
+        });
+      });
+  });
+  test("POST: 400 - should return an error message when user object has an incomplete body", () => {
+    const event = {
+      user_id: 2,
+      description:
+        "A group hike through the mountains, bring water and snacks.",
+      location: "Swiss Alps",
+      date: "01/12/2024",
+      capacity: 10,
+      organiser: "outdoor_enthusiast",
+    };
+    return request(app)
+      .post("/api/users/2/events")
+      .send(event)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toEqual("Bad request");
+      });
+  });
+});
+
+describe('/api/users/:user_id/events/:event_id', () => {
+  test('DELETE: 204 - should delete an event for a user by event_id', () => {
+    return request(app).delete("/api/users/1/events/1").expect(204)
+  })
+  test('DELETE: 404 - should return a message when we are trying to delete an event with a valid but non-existent id', () => {
+    return request(app).delete("/api/users/1/events/10").expect(400).then(({body}) => {
+      expect(body.message).toBe("Event not found")
+    })
+  })
+  test("DELETE 400 - should return an error message when we attempt to delete an event with an invalid id", () => {
+    return request(app)
+      .delete("/api/users/1/events/invalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+})

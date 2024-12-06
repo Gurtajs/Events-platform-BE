@@ -60,10 +60,30 @@ function getEventByUserData(user_id, event_id) {
   })
 }
 
+function postEventByUserData(event) {
+  const {user_id, title, description, location, date, capacity, organiser} = event
+  if (!user_id | !title | !description | !location | !date | !capacity | !organiser) {
+    return Promise.reject({status:400, message:"Bad request"})
+  }
+  return db.query(`INSERT INTO events (user_id, title, description, location, date, capacity, organiser) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [user_id, title, description, location, date, capacity, organiser]).then((event) => {
+    return event.rows[0]
+  })
+}
+
+function deleteEventByUserData(user_id, event_id) {
+  return db.query("DELETE FROM events WHERE user_id=$1 AND event_id=$2 RETURNING *", [user_id, event_id]).then((event) => {
+      if (event.rows.length === 0) {
+        return Promise.reject({status: 400, message: "Event not found"})
+      }
+    })
+}
+
 module.exports = {
   getAllUsersData,
   getUserData,
   postUserData,
   getAllEventsByUserData,
-  getEventByUserData
+  getEventByUserData, 
+  postEventByUserData,
+  deleteEventByUserData
 };
