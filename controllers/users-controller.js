@@ -1,4 +1,4 @@
-const {getAllUsersData, getUserData, postUserData, getAllEventsByUserData, getEventByUserData, postEventByUserData, deleteEventByUserData} = require("../models/users-models")
+const {getAllUsersData, getUserData, postUserData, getAllEventsByUserData, getEventByUserData, postEventByUserData, deleteEventByUserData, getUserByEmailData} = require("../models/users-models")
 
 function getAllUsers(req, res, next) {
   getAllUsersData().then((users) => {
@@ -48,4 +48,12 @@ function deleteEventByUser(req, res, next) {
   }).catch(next)
 }
 
-module.exports = {getAllUsers, getUser, postUser, getAllEventsByUser, getEventByUser, postEventByUser, deleteEventByUser}
+function getUserByEmail(req, res, next) {
+  const {email} = req.params
+  console.log(email)
+  getUserByEmailData(email).then((user) => {
+    res.status(200).send({user})
+  }).catch(next)
+}
+
+module.exports = {getAllUsers, getUser, postUser, getAllEventsByUser, getEventByUser, postEventByUser, deleteEventByUser, getUserByEmail}

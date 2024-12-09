@@ -22,12 +22,12 @@ function getUserData(user_id) {
 }
 
 function postUserData(user) {
-  const {first_name, last_name, age} = user
-  if (!first_name | !last_name | !age) {
+  const {first_name, last_name, age, email} = user
+  if (!first_name | !last_name | !age | !email) {
     return Promise.reject({status:400, message:"Bad request"})
   }
   return db.query(
-    `INSERT INTO users (first_name, last_name, age) VALUES ($1, $2, $3) RETURNING *`, [first_name, last_name, age]
+    `INSERT INTO users (first_name, last_name, age, email) VALUES ($1, $2, $3, $4) RETURNING *`, [first_name, last_name, age, email]
   ).then((user) => {
     return user.rows[0]
   })
@@ -35,7 +35,6 @@ function postUserData(user) {
 
 function getAllEventsByUserData(user_id) {
   return db.query(`SELECT * FROM events WHERE user_id = $1`, [user_id]).then((events) => {
-    console.log(events.rows)
     const eventRows = events.rows
     if (eventRows.length === 0) {
       return Promise.reject({
@@ -71,11 +70,23 @@ function postEventByUserData(event) {
 }
 
 function deleteEventByUserData(user_id, event_id) {
-  return db.query("DELETE FROM events WHERE user_id=$1 AND event_id=$2 RETURNING *", [user_id, event_id]).then((event) => {
+  return db.query(`DELETE FROM events WHERE user_id=$1 AND event_id=$2 RETURNING *`, [user_id, event_id]).then((event) => {
       if (event.rows.length === 0) {
-        return Promise.reject({status: 400, message: "Event not found"})
+        return Promise.reject({status: 404, message: "Event not found"})
       }
     })
+}
+
+function getUserByEmailData(email) {
+  if (!(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email))) {
+    return Promise.reject({status: 400, message: "Bad request"});
+  }
+  return db.query(`SELECT * FROM users WHERE email=$1`, [email]).then((user) => {
+    if (user.rows.length === 0) {
+      return Promise.reject({status: 404, message: "User not found"})
+    }
+    return user.rows[0]
+  })
 }
 
 module.exports = {
@@ -85,5 +96,6 @@ module.exports = {
   getAllEventsByUserData,
   getEventByUserData, 
   postEventByUserData,
-  deleteEventByUserData
+  deleteEventByUserData, 
+  getUserByEmailData
 };

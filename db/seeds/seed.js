@@ -13,7 +13,8 @@ const seed = ({ userData, eventsData }) => {
           user_id SERIAL PRIMARY KEY,
           first_name VARCHAR NOT NULL,
           last_name VARCHAR NOT NULL,
-          age INT NOT NULL
+          age INT NOT NULL, 
+          email VARCHAR NOT NULL
         )
         `);
     })
@@ -32,11 +33,12 @@ const seed = ({ userData, eventsData }) => {
     })
     .then(() => {
       const insertUsersQueryStr = format(
-        "INSERT INTO users ( first_name, last_name, age) VALUES %L;",
-        userData.map(({ first_name, last_name, age }) => [
+        "INSERT INTO users ( first_name, last_name, age, email) VALUES %L;",
+        userData.map(({ first_name, last_name, age, email }) => [
           first_name,
           last_name,
           age,
+          email
         ])
       );
       return db.query(insertUsersQueryStr);

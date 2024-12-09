@@ -51,6 +51,7 @@ describe("/api/users", () => {
       first_name: "Cristiano",
       last_name: "Ronaldo",
       age: 39,
+      email: "ronaldo@gmail.com"
     };
     return request(app)
       .post("/api/users")
@@ -61,6 +62,7 @@ describe("/api/users", () => {
           first_name: "Cristiano",
           last_name: "Ronaldo",
           age: 39,
+          email:"ronaldo@gmail.com"
         });
       });
   });
@@ -85,7 +87,6 @@ describe("/api/events", () => {
       .expect(200)
       .then(({ body }) => {
         const events = body.events;
-        console.log(events);
         expect(events.length).toBe(5);
         events.forEach((event) => {
           expect(typeof event.event_id).toBe("number");
@@ -254,15 +255,18 @@ describe("/api/users/:user_id/events", () => {
   });
 });
 
-describe('/api/users/:user_id/events/:event_id', () => {
-  test('DELETE: 204 - should delete an event for a user by event_id', () => {
-    return request(app).delete("/api/users/1/events/1").expect(204)
-  })
-  test('DELETE: 404 - should return a message when we are trying to delete an event with a valid but non-existent id', () => {
-    return request(app).delete("/api/users/1/events/10").expect(400).then(({body}) => {
-      expect(body.message).toBe("Event not found")
-    })
-  })
+describe("/api/users/:user_id/events/:event_id", () => {
+  test("DELETE: 204 - should delete an event for a user by event_id", () => {
+    return request(app).delete("/api/users/1/events/1").expect(204);
+  });
+  test("DELETE: 404 - should return a message when we are trying to delete an event with a valid but non-existent id", () => {
+    return request(app)
+      .delete("/api/users/1/events/10")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Event not found");
+      });
+  });
   test("DELETE 400 - should return an error message when we attempt to delete an event with an invalid id", () => {
     return request(app)
       .delete("/api/users/1/events/invalid")
@@ -271,4 +275,38 @@ describe('/api/users/:user_id/events/:event_id', () => {
         expect(body.message).toBe("Bad request");
       });
   });
-})
+});
+
+describe("/api/users/emails/:email", () => {
+  test("GET: 200 - should return a user by the email", () => {
+    return request(app)
+      .get("/api/users/emails/gs98@gmail.com")
+      .expect(200)
+      .then(({ body }) => {
+        const user = body.user;
+        expect(user.user_id).toBe(1);
+        expect(user.first_name).toBe("Gurtaj");
+        expect(user.last_name).toBe("Singh");
+        expect(user.age).toBe(26);
+        expect(user.email).toBe("gs98@gmail.com");
+      });
+  });
+  test("GET: 404 - sends an appropriate status and error mesage when given non-existent email", () => {
+    return request(app)
+      .get("/api/users/emails/notfound@gmail.com")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("User not found");
+      });
+  });
+
+  test("GET: 400 - sends an appropriate status and error message when given an invalid email", () => {
+    return request(app)
+      .get("/api/users/emails/nomail.com")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+});
+
