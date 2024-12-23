@@ -17,4 +17,30 @@ module.exports = [
     age: 40,
     email: "johnsonc19@gmail.com"
   },
+  {
+    first_name: "Carl",
+    last_name: "Johnson",
+    age: 40,
+    email: "johnsonc19@gmail.com"
+  }, {
+    first_name: "Carl",
+    last_name: "Johnson",
+    age: 40,
+    email: "johnsonc19@gmail.com"
+  }, {
+    first_name: "Carl",
+    last_name: "Johnson",
+    age: 40,
+    email: "johnsonc19@gmail.com"
+  }, {
+    first_name: "Carl",
+    last_name: "Johnson",
+    age: 40,
+    email: "johnsonc19@gmail.com"
+  }, {
+    first_name: "Carl",
+    last_name: "Johnson",
+    age: 40,
+    email: "johnsonc19@gmail.com"
+  },
 ];
